@@ -1,0 +1,303 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/bincyveena/device-warning-page/blob/main/Learning%20exercise\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# ifcopenshell-colab\n",
+        "\n",
+        "Let's start by installing IfcOpenShell. In addition, here are some other libraries that you might find useful. Lark helps parse custom queries, numpy is great for coordinates and matrixes, shapely provides 2D shape analysis, and mathutils provides Vector and Matrix functions."
+      ],
+      "metadata": {
+        "id": "Cmr8OBzECmiG"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "id": "sKmztOKUAnl3",
+        "outputId": "0188933a-48d7-4f2d-dbe6-a1f102c32027",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting lark\n",
+            "  Downloading lark-1.2.2-py3-none-any.whl.metadata (1.8 kB)\n",
+            "Downloading lark-1.2.2-py3-none-any.whl (111 kB)\n",
+            "\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/111.0 kB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━\u001b[0m \u001b[32m102.4/111.0 kB\u001b[0m \u001b[31m6.8 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m111.0/111.0 kB\u001b[0m \u001b[31m2.4 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: lark\n",
+            "Successfully installed lark-1.2.2\n",
+            "Requirement already satisfied: numpy in /usr/local/lib/python3.10/dist-packages (1.26.4)\n",
+            "Requirement already satisfied: shapely in /usr/local/lib/python3.10/dist-packages (2.0.6)\n",
+            "Requirement already satisfied: numpy<3,>=1.14 in /usr/local/lib/python3.10/dist-packages (from shapely) (1.26.4)\n",
+            "Collecting mathutils\n",
+            "  Downloading mathutils-3.3.0.tar.gz (245 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m245.4/245.4 kB\u001b[0m \u001b[31m4.3 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h  Preparing metadata (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "Building wheels for collected packages: mathutils\n",
+            "  Building wheel for mathutils (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for mathutils: filename=mathutils-3.3.0-cp310-cp310-linux_x86_64.whl size=659356 sha256=19cc8fa023f5408a6c169a7d68fce626ae38258a1fbd517a803370ba956c16cb\n",
+            "  Stored in directory: /root/.cache/pip/wheels/a0/43/5d/6512dbdb5935a0cdc474bc9d1fd7d23e7c9711877dd15223e3\n",
+            "Successfully built mathutils\n",
+            "Installing collected packages: mathutils\n",
+            "Successfully installed mathutils-3.3.0\n",
+            "Collecting ifcopenshell\n",
+            "  Downloading ifcopenshell-0.8.0-py310-none-manylinux_2_31_x86_64.whl.metadata (11 kB)\n",
+            "Requirement already satisfied: shapely in /usr/local/lib/python3.10/dist-packages (from ifcopenshell) (2.0.6)\n",
+            "Requirement already satisfied: numpy in /usr/local/lib/python3.10/dist-packages (from ifcopenshell) (1.26.4)\n",
+            "Collecting isodate (from ifcopenshell)\n",
+            "  Downloading isodate-0.7.2-py3-none-any.whl.metadata (11 kB)\n",
+            "Requirement already satisfied: python-dateutil in /usr/local/lib/python3.10/dist-packages (from ifcopenshell) (2.8.2)\n",
+            "Requirement already satisfied: lark in /usr/local/lib/python3.10/dist-packages (from ifcopenshell) (1.2.2)\n",
+            "Requirement already satisfied: typing-extensions in /usr/local/lib/python3.10/dist-packages (from ifcopenshell) (4.12.2)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.10/dist-packages (from python-dateutil->ifcopenshell) (1.16.0)\n",
+            "Downloading ifcopenshell-0.8.0-py310-none-manylinux_2_31_x86_64.whl (40.8 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m40.8/40.8 MB\u001b[0m \u001b[31m29.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading isodate-0.7.2-py3-none-any.whl (22 kB)\n",
+            "Installing collected packages: isodate, ifcopenshell\n",
+            "Successfully installed ifcopenshell-0.8.0 isodate-0.7.2\n"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install lark\n",
+        "!pip install numpy\n",
+        "!pip install shapely\n",
+        "!pip install mathutils\n",
+        "!pip install ifcopenshell"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Let's import IfcOpenShell to get started."
+      ],
+      "metadata": {
+        "id": "1-8dvjb2C5dw"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import ifcopenshell"
+      ],
+      "metadata": {
+        "id": "ltWVeLqrAskk"
+      },
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "my_model =ifcopenshell.open(\"ifcmodel.ifc\")\n",
+        "my_model\n",
+        "\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "x7et6uPXgAZJ",
+        "outputId": "054a83e4-a49d-4e3f-aa83-cfd33d246573",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "#5399=IfcWall('2O2Fr$t4X7Zf8NOew3FKau',#33,'Basic Wall:Party Wall - CMU Residential Unit Dimising Wall:143239',$,'Basic Wall:Party Wall - CMU Residential Unit Dimising Wall:128555',#5302,#5398,'143239')"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 16
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "first_wall = my_model.by_type(\"IfcWall\")[0]\n",
+        "first_wall"
+      ],
+      "metadata": {
+        "id": "E31W54obiM1u",
+        "outputId": "e7924dbf-31d3-4a32-e3a6-c9e37f31c755",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "#5399=IfcWall('2O2Fr$t4X7Zf8NOew3FKau',#33,'Basic Wall:Party Wall - CMU Residential Unit Dimising Wall:143239',$,'Basic Wall:Party Wall - CMU Residential Unit Dimising Wall:128555',#5302,#5398,'143239')"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 17
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "first_room = my_model.by_type(\"IfcSpace\")[0]\n",
+        "first_room"
+      ],
+      "metadata": {
+        "id": "q0wj2fCuiIjH",
+        "outputId": "f9996636-7d85-4570-9f3c-0f8ae68cb506",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "#514=IfcSpace('0BTBFw6f90Nfh9rP1dlXrr',#33,'A101','',$,#487,#513,'Foyer',.ELEMENT.,.INTERNAL.,$)"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 18
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "info = my_model.by_id(39)\n",
+        "info.get_info()"
+      ],
+      "metadata": {
+        "id": "OdIVzuznjIGf",
+        "outputId": "63f0275c-d873-419e-e761-52ced4d5da18",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "{'id': 39,\n",
+              " 'type': 'IfcBuildingStorey',\n",
+              " 'GlobalId': '1xS3BCk291UvhgP2dvNMKI',\n",
+              " 'OwnerHistory': #33=IfcOwnerHistory(#32,#2,$,.NOCHANGE.,$,$,$,0),\n",
+              " 'Name': 'Level 1',\n",
+              " 'Description': None,\n",
+              " 'ObjectType': None,\n",
+              " 'ObjectPlacement': #38=IfcLocalPlacement(#25,#37),\n",
+              " 'Representation': None,\n",
+              " 'LongName': None,\n",
+              " 'CompositionType': 'ELEMENT',\n",
+              " 'Elevation': 0.0}"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 20
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "walls = my_model.by_type(\"IfcWall\")\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "HnTXSIGfkGw3"
+      },
+      "execution_count": 30,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "psets = ifcopenshell.util.element.get_psets(first_wall)\n",
+        "psets"
+      ],
+      "metadata": {
+        "id": "TbzCVCW6jpzw",
+        "outputId": "25ae6062-0ce3-40d7-9c8f-ebb65ee7246d",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 159
+        }
+      },
+      "execution_count": 32,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "AttributeError",
+          "evalue": "module 'ifcopenshell.util' has no attribute 'element'",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-32-7d9e4e16f7a2>\u001b[0m in \u001b[0;36m<cell line: 1>\u001b[0;34m()\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mpsets\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mifcopenshell\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mutil\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0melement\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget_psets\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mfirst_wall\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      2\u001b[0m \u001b[0mpsets\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mAttributeError\u001b[0m: module 'ifcopenshell.util' has no attribute 'element'"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "We can download a sample model."
+      ],
+      "metadata": {
+        "id": "w0PA1Je3CWK8"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Let's get started and analyse our model!"
+      ],
+      "metadata": {
+        "id": "uC3oeyjcD5S0"
+      }
+    }
+  ]
+}
